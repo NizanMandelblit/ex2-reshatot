@@ -12,8 +12,10 @@ while True:
 
     data = client_socket.recv(100)
     print('Received: ', data)
-
     client_socket.send(data.upper())        
+
+    data = client_socket.recv(100)
+    print('Received: ', data)
 
     client_socket.close()
     print('Client disconnected')
