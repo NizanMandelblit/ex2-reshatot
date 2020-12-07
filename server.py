@@ -8,14 +8,13 @@ server.listen(5)
 
 while True:
     client_socket, client_address = server.accept()
-    print('Connection from: ', client_address)
 
     data = client_socket.recv(100)
     print('Received: ', data)
-    client_socket.send(data.upper())        
-
-    data = client_socket.recv(100)
-    print('Received: ', data)
-
+    dataArray = data.decode().split(" ")
+    if dataArray[1] == "/":
+        f = open("files/index.html", "r")
+        while f.readline():
+            client_socket.send(str(f.readlines()).encode())
     client_socket.close()
     print('Client disconnected')
