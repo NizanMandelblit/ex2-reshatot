@@ -33,7 +33,7 @@ while True:
     elif path == "/redirect":
         # send result.html
         msg = open("files/result.html", "rb").read()
-        msg="HTTP / 1.1 301 Moved Permanently\r\n Connection: close\r\n Location: / result.html\r\n \r\n\r\n".encode("UTF-8")+msg
+        msg="HTTP / 1.1 301 Moved Permanently\r\n Connection: close\r\n Location: /result.html\r\n \r\n\r\n".encode("UTF-8")+msg
         client_socket.send(msg)
         client_socket.close()
         continue
