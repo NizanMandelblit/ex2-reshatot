@@ -1,5 +1,4 @@
-import socket,sys
-
+import socket, sys
 
 # see os.path
 
@@ -12,16 +11,19 @@ server.listen(5)
 
 while True:
     client_socket, client_address = server.accept()
-    data = client_socket.recv(100)
-    print('Received: ', data)
-    dataArray = data.decode().split("\r\n")
+    recvdata = ''.encode('UTF-8')
+    while True:
+        recvdata += client_socket.recv(4096)
+        if "\r\n\r\n".encode('UTF-8') in recvdata:
+            break
+    print('Received: ', recvdata)
+    dataArray = recvdata.decode().split("\r\n")
     ask = dataArray[0]
     path = ask.split(" ")[1]
+    msg = "HTTP/1.1 200 OK/r/n Connection: close/r/n Content-Length: 11/r/n".encode('UTF-8')
     if path == "/":
-        f = open("files/index.html", "r")
-        lines = f.readlines()
-        while f.readline():
-            client_socket.send(str(f.readlines()).encode())
+        msg = msg + open("files/index.html", "rb").read()
+        client_socket.send(msg)
     elif path == "":
         pass
         # jpg, ico
@@ -31,5 +33,5 @@ while True:
     else:
         # all other files
         pass
-    client_socket.close()
-    print('Client disconnected')
+    # client_socket.close()
+    # print('Client disconnected')
