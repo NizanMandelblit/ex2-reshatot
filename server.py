@@ -30,7 +30,14 @@ while True:
             'UTF-8') + "\r\n Content-Length: ".encode('UTF-8') + str(len(msg)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + msg
         client_socket.send(msg)
-    elif ".jpg" in path or ".ico" in path:  # jpg,ico
+    elif path == "/redirect":
+        # send result.html
+        msg = open("files/result.html", "rb").read()
+        msg="HTTP / 1.1 301 Moved Permanently\r\n Connection: close\r\n Location: / result.html\r\n \r\n\r\n".encode("UTF-8")+msg
+        client_socket.send(msg)
+        client_socket.close()
+        continue
+    else:  # jpg,ico # all other files
         if "files" in path:
             msg = open(path[1:], "rb").read()
         else:
@@ -39,16 +46,6 @@ while True:
             'UTF-8') + "\r\n Content-Length: ".encode('UTF-8') + str(len(msg)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + msg
         client_socket.send(msg)
-    elif path == "/redirect":
-        # send result.html
-        msg = open("files/result.html", "rb").read()
-        msg="HTTP / 1.1 301 Moved Permanently\r\n Connection: close\r\n Location: / result.html\r\n \r\n\r\n".encode("UTF-8")+msg
-        client_socket.send(msg)
-        client_socket.close()
-        continue
-    else:
-        # all other files
-        pass
     if connection == "keep-alive":
         pass
     elif connection == "close":
