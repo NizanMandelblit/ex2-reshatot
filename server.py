@@ -19,7 +19,7 @@ while True:
     print('Received: ', recvdata)
     dataArray = recvdata.decode().split("\r\n")
     ask = dataArray[0]
-    connection=dataArray[2].split(" ")[1]
+    connection = dataArray[2].split(" ")[1]
     path = ask.split(" ")[1]
     if path == "/":
         msg = "HTTP/1.1 200 OK/r/n Connection: keep-alive/r/n Content-Length: 11/r/n"
@@ -39,5 +39,8 @@ while True:
     else:
         # all other files
         pass
-    # client_socket.close()
-    # print('Client disconnected')
+    if connection == "keep-alive":
+        pass
+    elif connection == "close":
+        client_socket.close()
+        print('Client disconnected')
