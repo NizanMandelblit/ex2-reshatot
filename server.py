@@ -22,11 +22,11 @@ while True:
     connection = dataArray[2].split(" ")[1]
     path = ask.split(" ")[1]
     if path == "/":
-        msg = "HTTP/1.1 200 OK/r/n Connection: keep-alive/r/n Content-Length: 11/r/n"
-        msg = msg + open("files/index.html", "r").read()
-        client_socket.send(msg.encode('UTF-8'))
+        msg = "HTTP/1.1 200 OK\r\n Connection: keep-alive\r\n Content-Length: 11\r\n\r\n".encode('UTF-8')
+        msg = msg + open("files/index.html", "rb").read()
+        client_socket.send(msg)
     elif ".ico" in path:
-        msg = "HTTP/1.1 200 OK/r/n Connection: keep-alive/r/n Content-Length: 11/r/n".encode('UTF-8')
+        msg = "HTTP/1.1 200 OK\r\n Connection: keep-alive\r\n Content-Length: 11\r\n\r\n".encode('UTF-8')
         msg = msg + open("files" + path, "rb").read()
         client_socket.send(msg)
         # ico
