@@ -7,7 +7,8 @@ TCP_PORT = int(sys.argv[1])
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((TCP_IP, TCP_PORT))
-server.listen(5)
+server.listen(1)
+# server.settimeout(1)  # Sets the socket to timeout after 1 second of no activity
 
 while True:
     client_socket, client_address = server.accept()
@@ -15,6 +16,8 @@ while True:
     while True:
         recvdata += client_socket.recv(4096)
         if "\r\n\r\n".encode('UTF-8') in recvdata:
+            break
+        elif recvdata == "":
             break
     print('Received: ', recvdata)
     dataArray = recvdata.decode().split("\r\n")
