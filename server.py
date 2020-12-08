@@ -19,26 +19,33 @@ while True:
             break
         elif recvdata == "":
             break
-    print('Received: ', recvdata)
+    print(recvdata.decode())
     dataArray = recvdata.decode().split("\r\n")
     ask = dataArray[0]
     connection = dataArray[2].split(" ")[1]
     path = ask.split(" ")[1]
-    if path == "/":
+    if path == "/":  # index.html
         msg = open("files/index.html", "rb").read()
         msg = "HTTP/1.1 200 OK\r\n Connection: ".encode('UTF-8') + connection.encode(
             'UTF-8') + "\r\n Content-Length: ".encode('UTF-8') + str(len(msg)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + msg
         client_socket.send(msg)
     elif ".jpg" in path or ".ico" in path:  # jpg,ico
-        msg = open(path[1:], "rb").read()
+        if "files" in path:
+            msg = open(path[1:], "rb").read()
+        else:
+            msg = open("files"+path, "rb").read()
         msg = "HTTP/1.1 200 OK\r\n Connection: ".encode('UTF-8') + connection.encode(
             'UTF-8') + "\r\n Content-Length: ".encode('UTF-8') + str(len(msg)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + msg
         client_socket.send(msg)
     elif path == "/redirect":
         # send result.html
-        pass
+        msg = open("files/result.html", "rb").read()
+        msg="HTTP / 1.1 301 Moved Permanently\r\n Connection: close\r\n Location: / result.html\r\n \r\n\r\n".encode("UTF-8")+msg
+        client_socket.send(msg)
+        client_socket.close()
+        continue
     else:
         # all other files
         pass
