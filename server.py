@@ -12,9 +12,15 @@ server.listen(1)
 
 while True:
     client_socket, client_address = server.accept()
+    client_socket.settimeout(1.0)  # timeout
     recvdata = ''.encode('UTF-8')
     while True:
-        recvdata += client_socket.recv(4096)
+        try:
+            recvdata += client_socket.recv(4096)
+        except socket.timeout:
+            break
+        # finally:
+        #     pass
         if "\r\n\r\n".encode('UTF-8') in recvdata:
             break
         elif recvdata == "":
@@ -22,12 +28,12 @@ while True:
     print(recvdata.decode())
     dataArray = recvdata.decode().split("\r\n")
     ask = dataArray[0]
-    connection = dataArray[2].split(" ")[1]
+    connection = dataArray[2].split(" ")[1]  # dataArray[2] runtime error?
     path = ask.split(" ")[1]
     if path == "/":  # index.html
         msg = open("files/index.html", "rb").read()
-        msg = "HTTP/1.1 200 OK\r\n Connection: ".encode('UTF-8') + connection.encode(
-            'UTF-8') + "\r\n Content-Length: ".encode('UTF-8') + str(len(msg)).encode('UTF-8') + "\r\n\r\n".encode(
+        msg = "HTTP/1.1 200 OK\r\nConnection: ".encode('UTF-8') + connection.encode(
+            'UTF-8') + "\r\nContent-Length: ".encode('UTF-8') + str(len(msg)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + msg
         client_socket.send(msg)
     elif path == "/redirect":
