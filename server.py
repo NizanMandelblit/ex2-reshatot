@@ -6,8 +6,8 @@ from os import path
 def file_doesnt_exist(client_socket):
     msg = "HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n".encode('UTF-8')
     client_socket.send(msg)
-    print("server send:")
-    print(msg.decode())
+    #print("server send:")
+    #print(msg.decode())
     client_socket.close()
 
 
@@ -25,7 +25,7 @@ while True:
 
     if connection == "close":
         client_socket, client_address = server.accept()
-        client_socket.settimeout(1.0)
+    client_socket.settimeout(1.0)
     recvdata = ''.encode('UTF-8')
     got_timeout = 0
     while True:
@@ -48,7 +48,7 @@ while True:
         continue
 
     # Got empty message
-    if recvdata == "":
+    if recvdata == "" or recvdata == "".encode('UTF-8'):
         print('Got empty message')
         client_socket.close()
         connection = "close"
@@ -67,8 +67,8 @@ while True:
             'UTF-8') + "\r\nContent-Length: ".encode('UTF-8') + str(len(file)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + file
         client_socket.send(msg)
-        print("server send:")
-        print(msg.decode())
+        #print("server send:")
+        #print(msg.decode())
     elif file_path == "/redirect":
         # send result.html
         file = open("files/result.html", "rb").read()
@@ -76,8 +76,8 @@ while True:
         msg = "HTTP/1.1 301 Moved Permanently\r\nConnection: close\r\nLocation: /result.html\r\n\r\n".encode("UTF-8")\
               + file
         client_socket.send(msg)
-        print("server send:")
-        print(msg.decode())
+        #print("server send:")
+        #print(msg.decode())
         client_socket.close()
         connection = "close"
         continue
