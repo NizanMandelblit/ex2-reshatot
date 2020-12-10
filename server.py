@@ -16,13 +16,16 @@ TCP_PORT = int(sys.argv[1])
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((TCP_IP, TCP_PORT))
-server.listen(5)  # we can't limit the number of connections
+server.listen(4)  # we can't limit the number of connections
 # server.settimeout(1)  # Sets the socket to timeout after 1 second of no activity
-
+connection = "close"
 
 while True:
-    client_socket, client_address = server.accept()
-    client_socket.settimeout(1.0)
+    # client_socket, client_address = server.accept()
+
+    if connection == "close":
+        client_socket, client_address = server.accept()
+        client_socket.settimeout(1.0)
     recvdata = ''.encode('UTF-8')
     got_timeout = 0
     while True:
@@ -35,17 +38,20 @@ while True:
             break
         elif recvdata.decode() == "":
             break
-
+    client_socket.settimeout(None)
     # Got timeout
     if got_timeout == 1:
         print('Got timeout')
         client_socket.close()
+        connection = "close"
         print('Client disconnected')
         continue
 
     # Got empty message
     if recvdata == "":
         print('Got empty message')
+        client_socket.close()
+        connection = "close"
         print('Client disconnected')
         continue
 
@@ -73,6 +79,7 @@ while True:
         print("server send:")
         print(msg.decode())
         client_socket.close()
+        connection = "close"
         continue
     else:  # jpg,ico, all other files
         if "files" in file_path:  # can be?
@@ -81,14 +88,15 @@ while True:
             is_exist = path.exists("files"+file_path)
             if not is_exist:
                 file_doesnt_exist(client_socket)
+                connection = "close"
                 continue
             file = open("files"+file_path, "rb").read()
         msg = "HTTP/1.1 200 OK\r\nConnection: ".encode('UTF-8') + connection.encode(
             'UTF-8') + "\r\nContent-Length: ".encode('UTF-8') + str(len(file)).encode('UTF-8') + "\r\n\r\n".encode(
             'UTF-8') + file
         client_socket.send(msg)
-        print("server send:")
-        print(msg.decode())
+        # print("server send:")
+        # print(msg.decode())
 
     if connection == "keep-alive":
         continue
